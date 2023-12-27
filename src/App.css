@@ -14,9 +14,10 @@
 .registration-form {
 	width: 300px;
 	padding: 20px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	background-color: #fff;
 }
 
 .form-group {
@@ -27,11 +28,13 @@ label {
 	display: block;
 	margin-bottom: 5px;
 	font-weight: bold;
+	color: #333;
 }
 
 input {
 	width: 100%;
-	padding: 5px;
+	padding: 8px;
+	margin-bottom: 10px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 }
@@ -44,7 +47,7 @@ input {
 
 button {
 	width: 100%;
-	padding: 5px;
+	padding: 10px;
 	background-color: #007bff;
 	color: #fff;
 	border: none;

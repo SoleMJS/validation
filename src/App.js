@@ -1,94 +1,61 @@
-// src/App.js
-import React, { useState } from 'react'
+import { yupResolver } from '@hookform/resolvers/yup'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import * as yup from 'yup'
 import './App.css'
 
+const schema = yup.object().shape({
+	email: yup.string().email('Некорректный email').required('Обязательное поле'),
+	password: yup
+		.string()
+		.min(6, 'Пароль должен содержать не менее 6 символов')
+		.required('Обязательное поле'),
+	confirmPassword: yup
+		.string()
+		.oneOf([yup.ref('password'), null], 'Пароли должны совпадать')
+		.required('Обязательное поле'),
+})
+
 export const App = () => {
-	const [formData, setFormData] = useState({
-		email: '',
-		password: '',
-		confirmPassword: '',
+	const { register, handleSubmit, formState } = useForm({
+		resolver: yupResolver(schema),
 	})
 
-	const [errors, setErrors] = useState({})
-	const [isButtonDisabled, setIsButtonDisabled] = useState(true)
-
-	const handleInputChange = e => {
-		const { name, value } = e.target
-		setFormData({
-			...formData,
-			[name]: value,
-		})
-	}
-
-	const validateForm = () => {
-		const newErrors = {}
-		const { email, password, confirmPassword } = formData
-
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-		if (!emailRegex.test(email)) {
-			newErrors.email = 'Некорректный email'
-		}
-
-		if (password.length < 6) {
-			newErrors.password = 'Пароль должен содержать не менее 6 символов'
-		}
-
-		if (password !== confirmPassword) {
-			newErrors.confirmPassword = 'Пароли не совпадают'
-		}
-
-		setErrors(newErrors)
-		setIsButtonDisabled(Object.keys(newErrors).length > 0)
-	}
-
-	const handleSubmit = e => {
-		e.preventDefault()
-		console.log('Форма отправлена:', formData)
+	const onSubmit = data => {
+		console.log('Форма отправлена:', data)
 	}
 
 	return (
 		<div className='registration-container'>
-			<form className='registration-form' onSubmit={handleSubmit}>
+			<form className='registration-form' onSubmit={handleSubmit(onSubmit)}>
 				<div className='form-group'>
 					<label>Email:</label>
-					<input
-						type='email'
-						name='email'
-						value={formData.email}
-						onChange={handleInputChange}
-						onBlur={validateForm}
-					/>
-					{errors.email && (
-						<span className='error-message'>{errors.email}</span>
+					<input {...register('email')} />
+					{formState.errors.email && (
+						<span className='error-message'>
+							{formState.errors.email.message}
+						</span>
 					)}
 				</div>
 				<div className='form-group'>
 					<label>Пароль:</label>
-					<input
-						type='password'
-						name='password'
-						value={formData.password}
-						onChange={handleInputChange}
-						onBlur={validateForm}
-					/>
-					{errors.password && (
-						<span className='error-message'>{errors.password}</span>
+					<input type='password' {...register('password')} />
+					{formState.errors.password && (
+						<span className='error-message'>
+							{formState.errors.password.message}
+						</span>
 					)}
 				</div>
 				<div className='form-group'>
 					<label>Повторите пароль:</label>
-					<input
-						type='password'
-						name='confirmPassword'
-						value={formData.confirmPassword}
-						onChange={handleInputChange}
-						onBlur={validateForm}
-					/>
-					{errors.confirmPassword && (
-						<span className='error-message'>{errors.confirmPassword}</span>
+					<input type='password' {...register('confirmPassword')} />
+					{formState.errors.confirmPassword && (
+						<span className='error-message'>
+							{formState.errors.confirmPassword.message}
+						</span>
 					)}
 				</div>
-				<button type='submit' disabled={isButtonDisabled} autoFocus>
+				<button type='submit' disabled={formState.isSubmitting} autoFocus>
 					Зарегистрироваться
 				</button>
 			</form>
